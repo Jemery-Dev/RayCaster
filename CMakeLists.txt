@@ -13,4 +13,8 @@ set(FREEGLUT_LIBRARIES freeglut)
 
 add_executable(raycaster main.c)
 
-target_link_libraries(raycaster ${OPENGL_gl_LIBRARY} ${FREEGLUT_LIBRARIES})
+target_link_libraries(raycaster
+        ${OPENGL_gl_LIBRARY}
+        ${OPENGL_glu_LIBRARY}
+        ${FREEGLUT_LIBRARIES}
+)

@@ -1,34 +1,53 @@
-#include <GL/freeglut.h>  // Inclure les en-têtes de FreeGLUT
-#include <GL/gl.h>        // Inclure les en-têtes d'OpenGL
+#include <GL/freeglut.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
 
-// Fonction pour dessiner à l'écran
-void display() {
-    glClear(GL_COLOR_BUFFER_BIT);  // Efface le tampon de couleur
+float px, py; // Player Position
 
-    glBegin(GL_TRIANGLES);  // Début du dessin de triangles
-    glColor3f(1.0, 0.0, 0.0);  // Couleur rouge
-    glVertex2f(-0.5, -0.5);   // Premier sommet
-    glColor3f(0.0, 1.0, 0.0);  // Couleur verte
-    glVertex2f(0.5, -0.5);    // Deuxième sommet
-    glColor3f(0.0, 0.0, 1.0);  // Couleur bleue
-    glVertex2f(0.0, 0.5);     // Troisième sommet
-    glEnd();  // Fin du dessin de triangles
-
-    glFlush();  // Forcer l'affichage du tampon de dessin
+void drawPlayer() {
+    glColor3f(1, 1, 0);
+    glPointSize(8);
+    glBegin(GL_POINTS);
+    glVertex2i(px, py);
+    glEnd();
 }
 
-// Fonction principale
-int main(int argc, char** argv) {
-    glutInit(&argc, argv);                      // Initialiser FreeGLUT
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB); // Mode d'affichage
-    glutInitWindowSize(400, 400);                // Taille de la fenêtre
-    glutInitWindowPosition(100, 100);            // Position de la fenêtre
-    glutCreateWindow("OpenGL Test");             // Créer la fenêtre avec un titre
+void buttons(unsigned char key, int x, int y) {
+    if(key == 'q') {
+        px-=5;
+    }
+    if(key == 'd') {
+        px+=5;
+    }
+    if(key == 'z') {
+        py-=5;
+    }
+    if(key == 's') {
+        py+=5;
+    }
+    glutPostRedisplay();
+}
 
-    glClearColor(1.0, 1.0, 1.0, 1.0);  // Couleur de fond blanche
-    glutDisplayFunc(display);         // Définir la fonction de rendu
+void display() {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    drawPlayer();
+    glutSwapBuffers();
+}
 
-    glutMainLoop();  // Entrer dans la boucle principale de GLUT
+void init() {
+    glClearColor(0.3, 0.3, 0.3, 0);
+    gluOrtho2D(0, 1024, 512, 0);
+    px = 300;
+    py = 300;
+}
 
-    return 0;
+int main(int argc, char *argv[]) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
+    glutInitWindowSize(1024, 512);
+    glutCreateWindow("Jemery Girard - RayTracer");
+    init();
+    glutDisplayFunc(display);
+    glutKeyboardFunc(buttons);
+    glutMainLoop();
 }
