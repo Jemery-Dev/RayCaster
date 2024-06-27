@@ -1,6 +1,8 @@
 #include <GL/freeglut.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <math.h>
+#define PI = 3.141592653589793238462643383279502884197;
 
 float px, py; // Player Position
 
@@ -12,7 +14,7 @@ void drawPlayer() {
     glEnd();
 }
 
-void buttons(unsigned char key, int x, int y) {
+void buttons(unsigned char const key, int x, int y) {
     if(key == 'q') {
         px-=5;
     }
@@ -28,8 +30,45 @@ void buttons(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
+int mapX=8, mapY=8, mapS=64;
+int map[]=
+    {
+    1,1,1,1,1,1,1,1,
+    1,0,1,0,0,0,0,1,
+    1,0,1,0,0,0,0,1,
+    1,0,1,1,0,0,0,1,
+    1,0,0,0,0,0,0,1,
+    1,0,0,0,0,1,0,1,
+    1,0,0,0,0,0,0,1,
+    1,1,1,1,1,1,1,1,
+    };
+
+
+void drawMap2D() {
+    int x, y, xo, yo;
+    for(y=0;y<mapY;y++) {
+        for(x=0;x<mapX;x++) {
+            if(map[y*mapX+x]==1) {
+                glColor3f(0.5,0.7,0.8);
+            }
+            else {
+                glColor3f(0,0,0);
+            }
+            xo=x*mapS; yo=y*mapS;
+            glBegin(GL_QUADS);
+            glVertex2i(xo+1, yo+1);
+            glVertex2i(xo+1, yo+mapS-1);
+            glVertex2i(xo+mapS-1, yo+mapS-1);
+            glVertex2i(xo+mapS-1, yo+1);
+            glEnd();
+        }
+    }
+}
+
+
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    drawMap2D();
     drawPlayer();
     glutSwapBuffers();
 }
