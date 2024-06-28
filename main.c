@@ -92,7 +92,7 @@ float dist(float ax, float ay, float bx, float by) {
 
 void drawRays3D() {
     int r, mx, my, mp, dof;
-    float rx, ry, ra, xo, yo;
+    float rx, ry, ra, xo, yo, disT;
     ra = pa-DR*30;
     if(ra<0) {
         ra+=2*PI;
@@ -100,7 +100,7 @@ void drawRays3D() {
     if(ra>2*PI) {
         ra-=2*PI;
     }
-    for (r = 0; r < 1; r++) {
+    for (r = 0; r < 60; r++) {
         // Check horizontal lines
         dof = 0;
         float disH = 100000, hx = px, hy = py;
@@ -182,9 +182,11 @@ void drawRays3D() {
         if (disV < disH) {
             rx = vx;
             ry = vy;
+            disT = disV;
         } else {
             rx = hx;
             ry = hy;
+            disT = disH;
         }
 
         glColor3f(1, 0, 0);
@@ -193,6 +195,30 @@ void drawRays3D() {
         glVertex2i(px, py);
         glVertex2i(rx, ry);
         glEnd();
+
+        // Draw 3D Walls
+        float ca=pa-ra;
+        if(ca<0) {
+            ca+=2*PI;
+        }
+        if(ca>2*PI) {
+            ca-=2*PI;
+        }
+
+        disT=disT*cos(ca); // Fix FishEye effect
+
+        float lineH = (mapS*320)/disT; //Get wall size by distance
+        if(lineH>320){
+            lineH=320;
+        }
+        float lineO=160-lineH/2; // Add Offset
+        glLineWidth(8);
+        glBegin(GL_LINES);
+        glVertex2i(r*8+530,lineO);
+        glVertex2i(r*8+530, lineH+lineO);
+        glEnd();
+
+
         ra+=DR;
         if(ra<0) {
             ra+=2*PI;
