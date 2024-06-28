@@ -5,6 +5,7 @@
 #define PI 3.141592653589793238462643383279502884197
 #define P2 PI/2
 #define P3 3*PI/2
+#define DR 0.0174533
 
 float px, py, pdx, pdy, pa; // Player Position
 
@@ -92,7 +93,13 @@ float dist(float ax, float ay, float bx, float by) {
 void drawRays3D() {
     int r, mx, my, mp, dof;
     float rx, ry, ra, xo, yo;
-    ra = pa;
+    ra = pa-DR*30;
+    if(ra<0) {
+        ra+=2*PI;
+    }
+    if(ra>2*PI) {
+        ra-=2*PI;
+    }
     for (r = 0; r < 1; r++) {
         // Check horizontal lines
         dof = 0;
@@ -186,6 +193,13 @@ void drawRays3D() {
         glVertex2i(px, py);
         glVertex2i(rx, ry);
         glEnd();
+        ra+=DR;
+        if(ra<0) {
+            ra+=2*PI;
+        }
+        if(ra>2*PI) {
+            ra-=2*PI;
+        }
     }
 }
 
