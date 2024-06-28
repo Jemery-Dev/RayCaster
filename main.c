@@ -183,13 +183,14 @@ void drawRays3D() {
             rx = vx;
             ry = vy;
             disT = disV;
+            glColor3f(0.9, 0, 0);
         } else {
             rx = hx;
             ry = hy;
             disT = disH;
+            glColor3f(0.7, 0, 0);
         }
 
-        glColor3f(1, 0, 0);
         glLineWidth(3);
         glBegin(GL_LINES);
         glVertex2i(px, py);
