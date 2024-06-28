@@ -3,6 +3,8 @@
 #include <GL/glu.h>
 #include <math.h>
 #define PI 3.141592653589793238462643383279502884197
+#define P2 PI/2
+#define P3 3*PI/2
 
 float px, py, pdx, pdy, pa; // Player Position
 
@@ -88,6 +90,7 @@ void drawRays3D() {
     float rx,ry,ra,xo,yo;
     ra=pa;
     for(r=0;r<1;r++) {
+        // Check horizontal lines
         dof=0;
         float aTan=-1/tan(ra);
         if(ra>PI) { // Looking Up
@@ -121,7 +124,48 @@ void drawRays3D() {
                 dof+=1; // Next line
             }
             glColor3f(0,1,0);
-            glLineWidth(1);
+            glLineWidth(5);
+            glBegin(GL_LINES);
+            glVertex2i(px,py);
+            glVertex2i(rx,ry);
+            glEnd();
+        }
+
+        // Check vertical lines
+        dof=0;
+        float nTan=-tan(ra);
+        if(ra>P2 && ra<P3) { // Looking left
+            rx=(((int)px>>6)<<6)-0.00001;
+            ry=(px-rx)*nTan+py;
+            xo=-64;
+            yo=-xo*nTan;
+        }
+        if(ra<P2 || ra>P3) { // Looking right
+            rx=(((int)px>>6)<<6)+64;
+            ry=(px-rx)*nTan+py;
+            xo=64;
+            yo=-xo*nTan;
+        }
+        if(ra==0 || ra == PI) { // Looking Straight Up or Down
+            rx=px;
+            ry=py;
+            dof=8;
+        }
+
+        while(dof<8) {
+            mx=(int)(rx)>>6;
+            my=(int)(ry)>>6;
+            mp=my*mapX+mx;
+            if(mp<mapX*mapY && map[mp]==1) {
+                dof=8; // HIT WALL
+            }
+            else {
+                rx+=xo;
+                ry+=yo;
+                dof+=1; // Next line
+            }
+            glColor3f(1,0,0);
+            glLineWidth(3);
             glBegin(GL_LINES);
             glVertex2i(px,py);
             glVertex2i(rx,ry);
