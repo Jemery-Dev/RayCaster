@@ -208,7 +208,13 @@ void drawRays3D() {
     }
 }
 
+float frame1, frame2, fps;
+
 void display() {
+    frame2 = glutGet(GLUT_ELAPSED_TIME);
+    fps = (frame2 - frame1);
+    frame1 = glutGet(GLUT_ELAPSED_TIME);
+
     if (Keys.q == 1) {
         pa -= 0.1;
         if (pa < 0) {
@@ -225,16 +231,35 @@ void display() {
         pdx = cos(pa) * 5;
         pdy = sin(pa) * 5;
     }
+
+    int xo = (pdx < 0) ? -20 : 20;
+    int yo = (pdy < 0) ? -20 : 20;
+
+    int ipx = px / 64.0;
+    int ipx_add_xo = (px + xo) / 64.0;
+    int ipx_sub_xo = (px - xo) / 64.0;
+    int ipy = py / 64.0;
+    int ipy_add_yo = (py + yo) / 64.0;
+    int ipy_sub_yo = (py - yo) / 64.0;
+
+    float speed = 0.2;
+
     if (Keys.z == 1) {
-        px += pdx;
-        py += pdy;
+        if (map[ipy * mapX + ipx_add_xo] == 0) {
+            px += pdx * 0.2 * fps * speed;
+        }
+        if (map[ipy_add_yo * mapX + ipx] == 0) {
+            py += pdy * 0.2 * fps * speed;
+        }
     }
     if (Keys.s == 1) {
-        px -= pdx;
-        py -= pdy;
+        if (map[ipy * mapX + ipx_sub_xo] == 0) {
+            px -= pdx * 0.2 * fps * speed;
+        }
+        if (map[ipy_sub_yo * mapX + ipx] == 0) {
+            py -= pdy * 0.2 * fps * speed;
+        }
     }
-
-    glutPostRedisplay();
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     drawMap2D();
@@ -242,6 +267,7 @@ void display() {
     drawRays3D();
     glutSwapBuffers();
 }
+
 
 void ButtonDown(unsigned char key, int x, int y) {
     if(key=='q') {
@@ -290,6 +316,11 @@ void init() {
     pdy = sin(pa) * 5;
 }
 
+void timer(int value) {
+    glutPostRedisplay();
+    glutTimerFunc(16, timer, 0);
+}
+
 int main(int argc, char *argv[]) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
@@ -301,5 +332,8 @@ int main(int argc, char *argv[]) {
     glutReshapeFunc(resize);
     glutKeyboardFunc(ButtonDown);
     glutKeyboardUpFunc(ButtonUp);
+    glutTimerFunc(0, timer, 0);
     glutMainLoop();
 }
+
+
